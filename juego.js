@@ -21,6 +21,10 @@ let personaje = {
   height: 50,
 };
 
+// Variables audios
+let punto = new Audio();
+punto.src = "audios/punto.mp3";
+
 // Variables imágenes
 let bird = new Image();
 bird.src = "imagenes/bird.png";
@@ -68,6 +72,11 @@ function loop() {
     contexto.drawImage(tuberiaSur, tuberias[i].x, tuberias[i].y + constante);
     tuberias[i].x--;
 
+    // Haciendo que las tuberías no tengan un desface  muy amplio.
+    if (tuberias[i].y + tuberiaNorte.height < 80) {
+      tuberias[i].y = 0;
+    }
+
     // Condición para que cada ciertos pixeles aparezca una nueva tubería.
     if (tuberias[i].x == 150) {
       tuberias.push({
@@ -86,6 +95,12 @@ function loop() {
       personaje.y + bird.height >= contexto.canvas.height - suelo.height
     ) {
       location.reload();
+    }
+
+    // Aumentando el score.
+    if (tuberias[i].x == personaje.x) {
+      score++;
+      punto.play();
     }
   }
 
