@@ -5,6 +5,7 @@ contexto.canvas.height = 530;
 
 const FPS = 60;
 let gravedad = 1.5;
+let score = 0;
 
 let tuberias = new Array();
 tuberias[0] = {
@@ -75,9 +76,24 @@ function loop() {
           Math.floor(Math.random() * tuberiaNorte.height) - tuberiaNorte.height,
       });
     }
+
+    // Detección de colisiones con las tuberías o con el suelo.
+    if (
+      (personaje.x + bird.width >= tuberias[i].x &&
+        personaje.x <= tuberias[i].x + tuberiaNorte.width &&
+        (personaje.y <= tuberias[i].y + tuberiaNorte.height ||
+          personaje.y + bird.height >= tuberias[i].y + constante)) ||
+      personaje.y + bird.height >= contexto.canvas.height - suelo.height
+    ) {
+      location.reload();
+    }
   }
 
+  // Condiciones
   personaje.y += gravedad;
+  contexto.fillStyle = "rgba(0,0,0,1)";
+  contexto.font = "25px Arial";
+  contexto.fillText("Score: " + score, 10, contexto.canvas.height - 40);
 }
 
 // Evento que al presionar una tecla el personaje vaya subiendo.
