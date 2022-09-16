@@ -64,12 +64,17 @@ function loop() {
   for (let i = 0; i < tuberias.length; i++) {
     let constante = tuberiaNorte.height + 80;
     contexto.drawImage(tuberiaNorte, tuberias[i].x, tuberias[i].y);
-    contexto.drawImage(
-      tuberiaSur,
-      tuberias[i].x,
-      tuberiaNorte[i].y + constante
-    ); 
+    contexto.drawImage(tuberiaSur, tuberias[i].x, tuberias[i].y + constante);
     tuberias[i].x--;
+
+    // Condición para que cada ciertos pixeles aparezca una nueva tubería.
+    if (tuberias[i].x == 150) {
+      tuberias.push({
+        x: contexto.canvas.width,
+        y:
+          Math.floor(Math.random() * tuberiaNorte.height) - tuberiaNorte.height,
+      });
+    }
   }
 
   personaje.y += gravedad;
