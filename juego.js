@@ -1,7 +1,12 @@
 // Capturando el canvas a dibujar y controlar.
-let contexto = document.getElementById("lienzo-juego").getContext("2d");
-contexto.canvas.width = 300;
-contexto.canvas.height = 530;
+let contexto = document.getElementById("lienzo-juego");
+let ctx = contexto.getContext("2d");
+const WIDTH = 300;
+const HEIGHT = 530;
+var CANVAS_WIDTH = 300;
+var CANVAS_HEIGHT = 530;
+contexto.width = WIDTH;
+contexto.height = HEIGHT;
 
 const FPS = 60;
 let gravedad = 1.5;
@@ -9,7 +14,7 @@ let score = 0;
 
 let tuberias = new Array();
 tuberias[0] = {
-  x: contexto.canvas.width,
+  x: contexto.width,
   y: 0,
 };
 
@@ -48,6 +53,21 @@ function presionar() {
   personaje.y -= 35;
 }
 
+resize();
+
+/**
+ * Se encarga de realizar un zoom al juego para que sea adaptivo.
+ */
+function resize() {
+  CANVAS_HEIGHT = window.innerHeight;
+  CANVAS_WIDTH = window.innerWidth;
+
+  contexto.width = WIDTH;
+  contexto.height = HEIGHT;
+
+  contexto.style.height = "" + CANVAS_HEIGHT + "px";
+}
+
 // Ejecuta la función loop cada cierto tiempo.
 setInterval(loop, 1000 / FPS);
 
@@ -56,20 +76,20 @@ setInterval(loop, 1000 / FPS);
  * lentamente al personaje.
  */
 function loop() {
-  contexto.clearRect(0, 0, 300, 530);
+  ctx.clearRect(0, 0, 300, 530);
 
   // Construcción del fondo y suelo
-  contexto.drawImage(background, 0, 0);
-  contexto.drawImage(suelo, 0, contexto.canvas.height - suelo.height);
+  ctx.drawImage(background, 0, 0);
+  ctx.drawImage(suelo, 0, contexto.height - suelo.height);
 
   // Construcción del personaje
-  contexto.drawImage(bird, personaje.x, personaje.y);
+  ctx.drawImage(bird, personaje.x, personaje.y);
 
   // Construcción de las tuberías
   for (let i = 0; i < tuberias.length; i++) {
     let constante = tuberiaNorte.height + 80;
-    contexto.drawImage(tuberiaNorte, tuberias[i].x, tuberias[i].y);
-    contexto.drawImage(tuberiaSur, tuberias[i].x, tuberias[i].y + constante);
+    ctx.drawImage(tuberiaNorte, tuberias[i].x, tuberias[i].y);
+    ctx.drawImage(tuberiaSur, tuberias[i].x, tuberias[i].y + constante);
     tuberias[i].x--;
 
     // Haciendo que las tuberías no tengan un desface  muy amplio.
@@ -80,7 +100,7 @@ function loop() {
     // Condición para que cada ciertos pixeles aparezca una nueva tubería.
     if (tuberias[i].x == 150) {
       tuberias.push({
-        x: contexto.canvas.width,
+        x: contexto.width,
         y:
           Math.floor(Math.random() * tuberiaNorte.height) - tuberiaNorte.height,
       });
@@ -92,7 +112,7 @@ function loop() {
         personaje.x <= tuberias[i].x + tuberiaNorte.width &&
         (personaje.y <= tuberias[i].y + tuberiaNorte.height ||
           personaje.y + bird.height >= tuberias[i].y + constante)) ||
-      personaje.y + bird.height >= contexto.canvas.height - suelo.height
+      personaje.y + bird.height >= contexto.height - suelo.height
     ) {
       location.reload();
     }
@@ -106,10 +126,11 @@ function loop() {
 
   // Condiciones
   personaje.y += gravedad;
-  contexto.fillStyle = "rgba(0,0,0,1)";
-  contexto.font = "25px Arial";
-  contexto.fillText("Score: " + score, 10, contexto.canvas.height - 40);
+  ctx.fillStyle = "rgba(0,0,0,1)";
+  ctx.font = "25px Arial";
+  ctx.fillText("Score: " + score, 10, contexto.height - 40);
 }
 
-// Evento que al presionar una tecla el personaje vaya subiendo.
+// Eventos.
+window.addEventListener("resize", resize);
 window.addEventListener("keydown", presionar);
